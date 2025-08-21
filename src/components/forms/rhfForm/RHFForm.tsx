@@ -11,12 +11,16 @@ import {
   ImageField,
   CountryField,
 } from './InputFields';
+import { useDispatch } from 'react-redux';
+import { setControlledFormValue } from '../../../store/slices/controlledFormSlicer';
 
 const RHFForm = () => {
   const methods = useForm<formValues>({ defaultValues: defaultValues });
+  const dispatch = useDispatch();
 
   const handleSubmit = (data: formValues) => {
     console.log(data);
+    dispatch(setControlledFormValue(data));
   };
 
   return (
