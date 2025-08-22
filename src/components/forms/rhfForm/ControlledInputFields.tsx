@@ -1,12 +1,16 @@
 import { Controller, useFormContext } from 'react-hook-form';
-import { type Country } from '../../store/types';
+import { type Country } from '../../../store/types';
 import { useSelector } from 'react-redux';
-import { type RootState } from '../../store';
-import { type formValues } from './rhfForm/types';
+import { type RootState } from '../../../store';
+import { type FormSchema } from './schema';
 import { useState, useRef, useEffect } from 'react';
+import { handleImageChange } from '../../../store/helper';
 
 function NameField() {
-  const { control } = useFormContext<formValues>();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<FormSchema>();
   return (
     <Controller
       control={control}
@@ -22,6 +26,7 @@ function NameField() {
               value={field.value || ''}
               placeholder="Enter your name"
             />
+            {errors.name && <div className="error">{errors.name.message}</div>}
           </div>
         );
       }}
@@ -30,7 +35,10 @@ function NameField() {
 }
 
 function AgeField() {
-  const { control } = useFormContext<formValues>();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<FormSchema>();
   return (
     <Controller
       control={control}
@@ -44,8 +52,13 @@ function AgeField() {
               type="number"
               {...field}
               value={field.value || ''}
+              onChange={(e) => {
+                const value = e.target.value;
+                field.onChange(value === '' ? undefined : Number(value));
+              }}
               placeholder="Enter your age"
             />
+            {errors.age && <div className="error">{errors.age.message}</div>}
           </div>
         );
       }}
@@ -54,7 +67,10 @@ function AgeField() {
 }
 
 function EmailField() {
-  const { control } = useFormContext<formValues>();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<FormSchema>();
   return (
     <Controller
       control={control}
@@ -70,6 +86,9 @@ function EmailField() {
               value={field.value || ''}
               placeholder="Enter your email"
             />
+            {errors.email && (
+              <div className="error">{errors.email.message}</div>
+            )}
           </div>
         );
       }}
@@ -78,7 +97,10 @@ function EmailField() {
 }
 
 function PasswordField() {
-  const { control } = useFormContext<formValues>();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<FormSchema>();
   return (
     <Controller
       control={control}
@@ -94,6 +116,9 @@ function PasswordField() {
               value={field.value || ''}
               placeholder="Enter your password"
             />
+            {errors.password && (
+              <div className="error">{errors.password.message}</div>
+            )}
           </div>
         );
       }}
@@ -102,7 +127,10 @@ function PasswordField() {
 }
 
 function ConfirmPasswordField() {
-  const { control } = useFormContext<formValues>();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<FormSchema>();
   return (
     <Controller
       control={control}
@@ -118,6 +146,9 @@ function ConfirmPasswordField() {
               value={field.value || ''}
               placeholder="Confirm your password"
             />
+            {errors.confirmPassword && (
+              <div className="error">{errors.confirmPassword.message}</div>
+            )}
           </div>
         );
       }}
@@ -126,7 +157,7 @@ function ConfirmPasswordField() {
 }
 
 function GenderField() {
-  const { control } = useFormContext<formValues>();
+  const { control } = useFormContext<FormSchema>();
   return (
     <Controller
       control={control}
@@ -151,7 +182,7 @@ function GenderField() {
 }
 
 function TermsField() {
-  const { control } = useFormContext<formValues>();
+  const { control } = useFormContext<FormSchema>();
   return (
     <Controller
       control={control}
@@ -175,26 +206,58 @@ function TermsField() {
 }
 
 function ImageField() {
-  const { control } = useFormContext<formValues>();
+  const {
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useFormContext<FormSchema>();
+  const [validationError, setValidationError] = useState<string>('');
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const currentImageBase64 = watch('imageBase64');
+
   return (
     <Controller
       control={control}
-      name="image"
-      render={({ field }) => (
+      name="imageBase64"
+      render={() => (
         <div className="form-field">
           <label htmlFor="image">Profile Image</label>
           <input
             id="image"
             type="file"
-            accept="image/png,image/jpeg"
-            name={field.name}
-            ref={field.ref}
-            onChange={(e) => {
-              const file = e.currentTarget.files?.[0] ?? null;
-              field.onChange(file);
-            }}
-            onBlur={field.onBlur}
+            accept="image/png,image/jpeg,image/svg+xml"
+            onChange={(e) =>
+              handleImageChange(
+                e,
+                (_, value) => setValue('imageBase64', value),
+                setValidationError,
+                setIsProcessing
+              )
+            }
+            disabled={isProcessing}
           />
+          {isProcessing && (
+            <div className="processing">Processing image...</div>
+          )}
+          {validationError && <div className="error">{validationError}</div>}
+          {errors.imageBase64 && (
+            <div className="error">{errors.imageBase64.message}</div>
+          )}
+          {currentImageBase64 && !validationError && (
+            <div className="image-preview">
+              <img
+                src={currentImageBase64}
+                alt="Preview"
+                style={{
+                  maxWidth: '150px',
+                  maxHeight: '150px',
+                  marginTop: '10px',
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
     />
@@ -202,7 +265,7 @@ function ImageField() {
 }
 
 function CountryField() {
-  const { control } = useFormContext<formValues>();
+  const { control } = useFormContext<FormSchema>();
   const { countries, isLoading } = useSelector(
     (state: RootState) => state.selectedCountries
   );

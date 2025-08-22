@@ -1,12 +1,23 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import { type formValues } from '../../components/forms/rhfForm/types';
-import { defaultValues } from '../../components/forms/rhfForm/types';
+import { type FormSchema } from '../../components/forms/rhfForm/schema';
+
+const defaultFormValues: FormSchema = {
+  name: '',
+  age: 0,
+  email: '',
+  password: '',
+  confirmPassword: '',
+  gender: '',
+  terms: false,
+  imageBase64: '',
+  country: '',
+};
 
 const selectedControlledFormSlice = createSlice({
   name: 'controlledForm',
-  initialState: defaultValues,
+  initialState: defaultFormValues,
   reducers: {
-    setFormValue: (state: formValues, action: PayloadAction<formValues>) => {
+    setFormValue: (state: FormSchema, action: PayloadAction<FormSchema>) => {
       return { ...state, ...action.payload };
     },
   },

@@ -1,32 +1,28 @@
-import { type UseFormProps } from 'react-hook-form';
-
 interface formValues {
   name: string;
-  age: number | null | undefined;
+  age: number;
   email: string;
   password: string;
   confirmPassword: string;
   gender: string;
   terms: boolean;
-  image: File | null;
+  imageBase64?: string;
   country: string;
 }
 
 const defaultValues: formValues = {
   name: '',
-  age: null,
+  age: 0,
   email: '',
   password: '',
   confirmPassword: '',
   gender: '',
   terms: false,
-  image: null,
+  imageBase64: '',
   country: '',
 };
 
-interface RHFFormProps extends UseFormProps {
-  defaultValues?: formValues;
-  children?: React.ReactNode;
+interface RHFFormProps {
   onSubmit: (data: formValues) => void;
 }
 
