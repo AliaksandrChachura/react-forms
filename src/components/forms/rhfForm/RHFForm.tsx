@@ -1,5 +1,6 @@
 import { FormProvider, useForm } from 'react-hook-form';
-import { type formValues, defaultValues } from './types';
+import { type formValues } from './types';
+import { useSelector } from 'react-redux';
 import {
   NameField,
   AgeField,
@@ -10,17 +11,25 @@ import {
   TermsField,
   ImageField,
   CountryField,
-} from './InputFields';
+} from '../InputFields';
 import { useDispatch } from 'react-redux';
-import { setControlledFormValue } from '../../../store/slices/controlledFormSlicer';
+import { setFormValue } from '../../../store/slices/formSlicer';
+import { type RootState } from '../../../store';
 
-const RHFForm = () => {
-  const methods = useForm<formValues>({ defaultValues: defaultValues });
+interface RHFFormProps {
+  onSubmit: (data: formValues) => void;
+}
+
+const RHFForm = ({ onSubmit }: RHFFormProps) => {
+  const filledFormValues = useSelector(
+    (state: RootState) => state.controlledForm
+  );
+  const methods = useForm<formValues>({ defaultValues: filledFormValues });
   const dispatch = useDispatch();
 
   const handleSubmit = (data: formValues) => {
-    console.log(data);
-    dispatch(setControlledFormValue(data));
+    dispatch(setFormValue(data));
+    onSubmit(data);
   };
 
   return (
