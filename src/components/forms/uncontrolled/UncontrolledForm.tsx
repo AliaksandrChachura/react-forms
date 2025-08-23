@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ZodError } from 'zod';
 import { setFormValue } from '../../../store/slices/formSlicer';
 import { type RootState } from '../../../store';
-import { formSchema, type FormSchema } from '../rhfForm/schema';
+import { formSchema, type FormSchema } from '../controlled/schema';
 import {
   UncontrolledInputField,
   UncontrolledSelectField,

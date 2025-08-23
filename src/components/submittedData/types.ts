@@ -1,4 +1,4 @@
-import { type formValues } from '../forms/rhfForm/types';
+import { type formValues } from '../forms/controlled/types';
 
 interface SubmittedDataDisplayProps {
   data: formValues;

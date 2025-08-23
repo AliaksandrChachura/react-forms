@@ -2,7 +2,7 @@
 @import './components/header/header.scss';
 @import './components/submittedData/SubmittedDataDisplay.scss';
 @import './components/forms/uncontrolled/UncontrolledForm.scss';
-@import './components/forms/rhfForm/ControlledForm.scss';
+@import './components/forms/controlled/ControlledForm.scss';
 
 .form {
   display: flex;

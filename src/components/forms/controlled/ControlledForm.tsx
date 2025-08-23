@@ -17,6 +17,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { setFormValue } from '../../../store/slices/formSlicer';
 import { type RootState } from '../../../store';
+import { useMemo } from 'react';
 
 const RHFForm = ({ onSubmit }: RHFFormProps) => {
   const filledFormValues = useSelector((state: RootState) => state.form);
@@ -24,10 +25,21 @@ const RHFForm = ({ onSubmit }: RHFFormProps) => {
     defaultValues: filledFormValues as FormSchema,
     resolver: zodResolver(formSchema),
     mode: 'onBlur',
+    reValidateMode: 'onChange',
   });
   const dispatch = useDispatch();
 
-  const hasErrors = Object.keys(methods.formState.errors).length > 0;
+  // Check if form is valid by validating current values against schema
+  const isFormValid = useMemo(() => {
+    try {
+      const currentValues = methods.getValues();
+      formSchema.parse(currentValues);
+      return true;
+    } catch {
+      return false;
+    }
+  }, [methods]);
+
   const isSubmitting = methods.formState.isSubmitting;
 
   const handleSubmit = (data: FormSchema) => {
@@ -49,8 +61,8 @@ const RHFForm = ({ onSubmit }: RHFFormProps) => {
         <CountryField />
         <button
           type="submit"
-          disabled={hasErrors || isSubmitting}
-          className={hasErrors ? 'submit-button-error' : ''}
+          disabled={!isFormValid || isSubmitting}
+          className={!isFormValid ? 'submit-button-error' : ''}
         >
           {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>

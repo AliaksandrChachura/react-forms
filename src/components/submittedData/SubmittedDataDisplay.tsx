@@ -1,4 +1,4 @@
-import { type FormSchema } from '../forms/rhfForm/schema';
+import { type FormSchema } from '../forms/controlled/schema';
 
 interface SubmittedDataDisplayProps {
   data: FormSchema;

@@ -41,10 +41,9 @@ export const formSchema = z
           'data:image/png',
           'data:image/jpeg',
           'data:image/jpg',
-          'data:image/svg+xml',
         ];
         return allowedTypes.some((type) => base64.startsWith(type));
-      }, 'Only PNG, JPEG, and SVG images are allowed'),
+      }, 'Only PNG, JPEG images are allowed'),
     country: z.string().min(1, 'Please select a country'),
   })
   .refine((data) => data.password === data.confirmPassword, {

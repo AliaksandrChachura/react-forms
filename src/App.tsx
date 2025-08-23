@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import RHFForm from './components/forms/rhfForm/ControlledForm';
+import RHFForm from './components/forms/controlled/ControlledForm';
 import UncontrolledForm from './components/forms/uncontrolled/UncontrolledForm';
 import Header from './components/header/Header';
 import Modal from './components/modal/Modal';
 import SubmittedDataDisplay from './components/submittedData/SubmittedDataDisplay';
 import { fetchCountries } from './store/slices/selectedCountries';
 import { type AppDispatch } from './store';
-import { type FormSchema } from './components/forms/rhfForm/schema';
+import { type FormSchema } from './components/forms/controlled/schema';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);

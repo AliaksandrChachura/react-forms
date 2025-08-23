@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import { type FormSchema } from '../../components/forms/rhfForm/schema';
+import { type FormSchema } from '../../components/forms/controlled/schema';
 
 const defaultFormValues: FormSchema = {
   name: '',
