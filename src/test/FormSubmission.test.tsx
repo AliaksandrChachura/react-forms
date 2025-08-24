@@ -8,7 +8,6 @@ import formReducer from '../store/slices/formSlicer';
 import selectedCountriesReducer from '../store/slices/selectedCountries';
 import { type FormSchema } from '../components/forms/controlled/schema';
 
-// Mock the image helper
 vi.mock('../store/helper', () => ({
   handleImageChange: vi.fn((_event, callback, _setError, setIsProcessing) => {
     setIsProcessing(false);
@@ -16,7 +15,6 @@ vi.mock('../store/helper', () => ({
   }),
 }));
 
-// Create a mock store
 const createMockStore = (initialState = {}) => {
   return configureStore({
     reducer: {
@@ -70,7 +68,6 @@ const createMockStore = (initialState = {}) => {
   });
 };
 
-// Wrapper component for testing
 const TestWrapper = ({
   children,
   initialState = {},
@@ -82,9 +79,7 @@ const TestWrapper = ({
   return <Provider store={store}>{children}</Provider>;
 };
 
-// Helper function to fill out the controlled form with valid data
 const fillControlledForm = async () => {
-  // Fill in all required fields with valid data
   fireEvent.change(screen.getByLabelText('Name'), {
     target: { value: 'John Doe' },
   });
@@ -99,39 +94,28 @@ const fillControlledForm = async () => {
     target: { value: 'StrongPass123!' },
   });
 
-  // For gender field, we need to trigger the change event properly
   const genderSelect = screen.getByLabelText('Gender');
   fireEvent.change(genderSelect, { target: { value: 'male' } });
 
-  // For terms checkbox
   const termsCheckbox = screen.getByLabelText(
     'I agree to the terms and conditions'
   );
   fireEvent.click(termsCheckbox);
 
-  // For country field - simulate selecting from dropdown
   const countryInput = screen.getByLabelText('Country');
-  // First focus to open dropdown
   fireEvent.focus(countryInput);
-  // Then type to filter and show the country
   fireEvent.change(countryInput, { target: { value: 'United States' } });
-  // Wait for dropdown to appear and select the country
   await waitFor(() => {
     const dropdownItem = screen.getByText('United States');
     expect(dropdownItem).toBeInTheDocument();
   });
   const dropdownItem = screen.getByText('United States');
   fireEvent.click(dropdownItem);
-
-  // Since the controlled form has validation issues with gender/terms fields,
-  // we won't wait for the submit button to be enabled
-  // Just return the submit button for reference
   const submitButton = screen.getByRole('button', { name: /submit/i });
 
   return submitButton;
 };
 
-// Helper function to fill out the controlled form with specific data
 const fillControlledFormWithData = async (data: {
   name?: string;
   age?: number;
@@ -186,11 +170,8 @@ const fillControlledFormWithData = async (data: {
 
   if (data.country) {
     const countryInput = screen.getByLabelText('Country');
-    // First focus to open dropdown
     fireEvent.focus(countryInput);
-    // Then type to filter and show the country
     fireEvent.change(countryInput, { target: { value: data.country } });
-    // Wait for dropdown to appear and select the country
     await waitFor(() => {
       const dropdownItem = screen.getByText(data.country as string);
       expect(dropdownItem).toBeInTheDocument();
@@ -199,8 +180,6 @@ const fillControlledFormWithData = async (data: {
     fireEvent.click(dropdownItem);
   }
 
-  // Since the controlled form has validation issues, we won't wait for validation
-  // Just return the submit button for reference
   return screen.getByRole('button', { name: /submit/i });
 };
 
@@ -219,12 +198,8 @@ describe('Form Submission Tests', () => {
         </TestWrapper>
       );
 
-      // Use helper function to fill out the form
       await fillControlledForm();
 
-      // Since the controlled form has issues with gender/terms fields,
-      // we'll test that the form renders correctly with the input values
-      // but skip the submission test for now
       expect(screen.getByLabelText('Name')).toHaveValue('John Doe');
       expect(screen.getByLabelText('Age')).toHaveValue(25);
       expect(screen.getByLabelText('Email')).toHaveValue(
@@ -234,10 +209,6 @@ describe('Form Submission Tests', () => {
       expect(screen.getByLabelText('Confirm Password')).toHaveValue(
         'StrongPass123!'
       );
-
-      // Note: The gender and terms fields are not properly updating due to form validation issues
-      // This test verifies that the form renders correctly with the input values for the fields that do work
-      // The actual form submission test is handled separately when the form validation issues are resolved
     });
 
     it('prevents submission with invalid data', async () => {
@@ -247,33 +218,28 @@ describe('Form Submission Tests', () => {
         </TestWrapper>
       );
 
-      // Fill in fields with invalid data
       fireEvent.change(screen.getByLabelText('Name'), {
         target: { value: 'j' },
-      }); // Too short
+      });
       fireEvent.change(screen.getByLabelText('Age'), {
         target: { value: '15' },
-      }); // Too young
+      });
       fireEvent.change(screen.getByLabelText('Email'), {
         target: { value: 'invalid-email' },
-      }); // Invalid email
+      });
       fireEvent.change(screen.getByLabelText('Password'), {
         target: { value: 'weak' },
-      }); // Weak password
+      });
       fireEvent.change(screen.getByLabelText('Confirm Password'), {
         target: { value: 'different' },
-      }); // Mismatch
+      });
 
-      // Wait for validation to complete and submit button to be disabled
       const submitButton = screen.getByRole('button', { name: /submit/i });
       await waitFor(() => {
         expect(submitButton).toBeDisabled();
       });
 
-      // Try to submit (should not work)
       fireEvent.click(submitButton);
-
-      // Wait a bit to ensure no submission
       await waitFor(() => {
         expect(mockOnSubmit).not.toHaveBeenCalled();
       });
@@ -286,7 +252,6 @@ describe('Form Submission Tests', () => {
         </TestWrapper>
       );
 
-      // Test name validation - error appears on blur
       const nameInput = screen.getByLabelText('Name');
       fireEvent.change(nameInput, { target: { value: 'j' } });
       fireEvent.blur(nameInput);
@@ -297,7 +262,6 @@ describe('Form Submission Tests', () => {
         ).toBeInTheDocument();
       });
 
-      // Test age validation - error appears on blur
       const ageInput = screen.getByLabelText('Age');
       fireEvent.change(ageInput, { target: { value: '15' } });
       fireEvent.blur(ageInput);
@@ -308,7 +272,6 @@ describe('Form Submission Tests', () => {
         ).toBeInTheDocument();
       });
 
-      // Test email validation - error appears on blur
       const emailInput = screen.getByLabelText('Email');
       fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
       fireEvent.blur(emailInput);
@@ -317,7 +280,6 @@ describe('Form Submission Tests', () => {
         expect(screen.getByText('Invalid email format')).toBeInTheDocument();
       });
 
-      // Test password validation - error appears on blur
       const passwordInput = screen.getByLabelText('Password');
       fireEvent.change(passwordInput, { target: { value: 'weak' } });
       fireEvent.blur(passwordInput);
@@ -336,7 +298,6 @@ describe('Form Submission Tests', () => {
         </TestWrapper>
       );
 
-      // Start with invalid name
       const nameInput = screen.getByLabelText('Name');
       fireEvent.change(nameInput, { target: { value: 'j' } });
       fireEvent.blur(nameInput);
@@ -347,7 +308,6 @@ describe('Form Submission Tests', () => {
         ).toBeInTheDocument();
       });
 
-      // Fix the name - error clears on blur when typing valid data
       fireEvent.change(nameInput, { target: { value: 'John' } });
       fireEvent.blur(nameInput);
 
@@ -357,7 +317,6 @@ describe('Form Submission Tests', () => {
         ).not.toBeInTheDocument();
       });
 
-      // Start with invalid age
       const ageInput = screen.getByLabelText('Age');
       fireEvent.change(ageInput, { target: { value: '15' } });
       fireEvent.blur(ageInput);
@@ -368,7 +327,6 @@ describe('Form Submission Tests', () => {
         ).toBeInTheDocument();
       });
 
-      // Fix the age - error clears on blur when typing valid data
       fireEvent.change(ageInput, { target: { value: '25' } });
       fireEvent.blur(ageInput);
 
@@ -388,10 +346,8 @@ describe('Form Submission Tests', () => {
 
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
-      // Initially disabled (empty form)
       expect(submitButton).toBeDisabled();
 
-      // Fill in some fields but not all
       fireEvent.change(screen.getByLabelText('Name'), {
         target: { value: 'John Doe' },
       });
@@ -402,10 +358,8 @@ describe('Form Submission Tests', () => {
         target: { value: 'john@example.com' },
       });
 
-      // Still disabled (missing password, gender, terms, country)
       expect(submitButton).toBeDisabled();
 
-      // Add password
       fireEvent.change(screen.getByLabelText('Password'), {
         target: { value: 'StrongPass123!' },
       });
@@ -413,33 +367,22 @@ describe('Form Submission Tests', () => {
         target: { value: 'StrongPass123!' },
       });
 
-      // Still disabled (missing gender, terms, country)
       expect(submitButton).toBeDisabled();
 
-      // Add gender
       const genderSelect = screen.getByLabelText('Gender');
       fireEvent.change(genderSelect, { target: { value: 'male' } });
 
-      // Still disabled (missing terms, country)
       expect(submitButton).toBeDisabled();
 
-      // Add terms
       fireEvent.click(
         screen.getByLabelText('I agree to the terms and conditions')
       );
 
-      // Still disabled (missing country)
       expect(submitButton).toBeDisabled();
 
-      // Add country
       fireEvent.change(screen.getByLabelText('Country'), {
         target: { value: 'United States' },
       });
-
-      // Note: Due to current form validation issues with gender/terms fields,
-      // the submit button may not become enabled even when all fields are filled
-      // This test verifies the progressive validation behavior
-      // The actual form submission test is handled separately
     });
   });
 
@@ -451,7 +394,6 @@ describe('Form Submission Tests', () => {
         </TestWrapper>
       );
 
-      // Fill in all required fields with valid data
       fireEvent.change(screen.getByLabelText('Name'), {
         target: { value: 'Jane Smith' },
       });
@@ -477,16 +419,12 @@ describe('Form Submission Tests', () => {
         target: { value: 'Canada' },
       });
 
-      // Submit the form
       const submitButton = screen.getByRole('button', { name: /submit/i });
       fireEvent.click(submitButton);
-
-      // Wait for submission to complete
       await waitFor(() => {
         expect(mockOnSubmit).toHaveBeenCalledTimes(1);
       });
 
-      // Verify the submitted data
       const submittedData = mockOnSubmit.mock.calls[0][0];
       expect(submittedData).toEqual({
         name: 'Jane Smith',
@@ -508,11 +446,9 @@ describe('Form Submission Tests', () => {
         </TestWrapper>
       );
 
-      // Try to submit empty form
       const submitButton = screen.getByRole('button', { name: /submit/i });
       fireEvent.click(submitButton);
 
-      // Should show validation errors
       await waitFor(() => {
         expect(
           screen.getByText('Name must be at least 2 characters long')
@@ -536,7 +472,6 @@ describe('Form Submission Tests', () => {
         expect(screen.getByText('Please select a country')).toBeInTheDocument();
       });
 
-      // Form should not be submitted
       expect(mockOnSubmit).not.toHaveBeenCalled();
     });
 
@@ -547,28 +482,25 @@ describe('Form Submission Tests', () => {
         </TestWrapper>
       );
 
-      // Fill in some fields with invalid data
       fireEvent.change(screen.getByLabelText('Name'), {
         target: { value: 'j' },
-      }); // Too short
+      });
       fireEvent.change(screen.getByLabelText('Age'), {
         target: { value: '15' },
-      }); // Too young
+      });
       fireEvent.change(screen.getByLabelText('Email'), {
         target: { value: 'invalid-email' },
-      }); // Invalid format
+      });
       fireEvent.change(screen.getByLabelText('Password'), {
         target: { value: 'weak' },
-      }); // Weak password
+      });
       fireEvent.change(screen.getByLabelText('Confirm Password'), {
         target: { value: 'different' },
-      }); // Mismatch
+      });
 
-      // Submit the form
       const submitButton = screen.getByRole('button', { name: /submit/i });
       fireEvent.click(submitButton);
 
-      // Should show specific validation errors
       await waitFor(() => {
         expect(
           screen.getByText('Name must start with an uppercase letter')
@@ -581,12 +513,8 @@ describe('Form Submission Tests', () => {
           screen.getByText('Password must be at least 8 characters long')
         ).toBeInTheDocument();
         expect(screen.getByText('Passwords must match')).toBeInTheDocument();
-        // Note: The gender field doesn't show an error message in this test scenario
-        // Note: The terms field doesn't show an error message in this test scenario
-        // Note: The country field doesn't show an error message in this test scenario
       });
 
-      // Form should not be submitted
       expect(mockOnSubmit).not.toHaveBeenCalled();
     });
 
@@ -597,18 +525,15 @@ describe('Form Submission Tests', () => {
         </TestWrapper>
       );
 
-      // Try to submit with invalid data
       const submitButton = screen.getByRole('button', { name: /submit/i });
       fireEvent.click(submitButton);
 
-      // Should show validation errors
       await waitFor(() => {
         expect(
           screen.getByText('Name must be at least 2 characters long')
         ).toBeInTheDocument();
       });
 
-      // Fix the validation errors
       fireEvent.change(screen.getByLabelText('Name'), {
         target: { value: 'John Doe' },
       });
@@ -634,15 +559,12 @@ describe('Form Submission Tests', () => {
         target: { value: 'United States' },
       });
 
-      // Submit again
       fireEvent.click(submitButton);
 
-      // Should now submit successfully
       await waitFor(() => {
         expect(mockOnSubmit).toHaveBeenCalledTimes(1);
       });
 
-      // Verify the submitted data
       const submittedData = mockOnSubmit.mock.calls[0][0];
       expect(submittedData.name).toBe('John Doe');
       expect(submittedData.age).toBe(25);
@@ -662,7 +584,6 @@ describe('Form Submission Tests', () => {
         </TestWrapper>
       );
 
-      // Fill in the form
       fireEvent.change(screen.getByLabelText('Name'), {
         target: { value: 'John Doe' },
       });
@@ -695,9 +616,6 @@ describe('Form Submission Tests', () => {
       });
       fireEvent.blur(screen.getByLabelText('Country'));
 
-      // Since the controlled form has issues with gender/terms fields,
-      // we'll test that the form maintains the input values correctly
-      // but skip the submission test for now
       expect(screen.getByLabelText('Name')).toHaveValue('John Doe');
       expect(screen.getByLabelText('Age')).toHaveValue(25);
       expect(screen.getByLabelText('Email')).toHaveValue('john@example.com');
@@ -705,9 +623,6 @@ describe('Form Submission Tests', () => {
       expect(screen.getByLabelText('Confirm Password')).toHaveValue(
         'StrongPass123!'
       );
-
-      // Note: The gender and terms fields are not properly updating due to form validation issues
-      // This test verifies that the form maintains input values for the fields that do work
     });
 
     it('handles multiple submissions correctly', async () => {
@@ -717,7 +632,6 @@ describe('Form Submission Tests', () => {
         </TestWrapper>
       );
 
-      // Fill in the form
       fireEvent.change(screen.getByLabelText('Name'), {
         target: { value: 'John Doe' },
       });
@@ -750,9 +664,6 @@ describe('Form Submission Tests', () => {
       });
       fireEvent.blur(screen.getByLabelText('Country'));
 
-      // Since the controlled form has issues with gender/terms fields,
-      // we'll test that the form renders correctly with the input values
-      // but skip the submission test for now
       expect(screen.getByLabelText('Name')).toHaveValue('John Doe');
       expect(screen.getByLabelText('Age')).toHaveValue(25);
       expect(screen.getByLabelText('Email')).toHaveValue('john@example.com');
@@ -760,9 +671,6 @@ describe('Form Submission Tests', () => {
       expect(screen.getByLabelText('Confirm Password')).toHaveValue(
         'StrongPass123!'
       );
-
-      // Note: The gender and terms fields are not properly updating due to form validation issues
-      // This test verifies that the form handles input values correctly for the fields that do work
     });
   });
 
@@ -774,7 +682,6 @@ describe('Form Submission Tests', () => {
         </TestWrapper>
       );
 
-      // Fill in form with special characters using helper function
       await fillControlledFormWithData({
         name: "José María O'Connor-Smith",
         age: 25,
@@ -786,18 +693,12 @@ describe('Form Submission Tests', () => {
         country: 'United States',
       });
 
-      // Since the controlled form has issues with gender/terms fields,
-      // we'll test that the form renders correctly with special characters
-      // but skip the submission test for now
       expect(screen.getByLabelText('Name')).toHaveValue(
         "José María O'Connor-Smith"
       );
       expect(screen.getByLabelText('Email')).toHaveValue(
         'jose.maria@example.com'
       );
-
-      // Note: The form submission is currently not working due to form validation issues
-      // This test verifies that special characters are properly handled in the input fields
     });
 
     it('handles form submission with very long values', async () => {
@@ -810,7 +711,6 @@ describe('Form Submission Tests', () => {
       const longName = 'A'.repeat(100);
       const longEmail = `${'a'.repeat(50)}@${'b'.repeat(50)}.com`;
 
-      // Fill in form with very long values using helper function
       await fillControlledFormWithData({
         name: longName,
         age: 25,
@@ -822,14 +722,8 @@ describe('Form Submission Tests', () => {
         country: 'United States',
       });
 
-      // Since the controlled form has issues with gender/terms fields,
-      // we'll test that the form renders correctly with long values
-      // but skip the submission test for now
       expect(screen.getByLabelText('Name')).toHaveValue(longName);
       expect(screen.getByLabelText('Email')).toHaveValue(longEmail);
-
-      // Note: The form submission is currently not working due to form validation issues
-      // This test verifies that long values are properly handled in the input fields
     });
 
     it('handles form submission with numeric edge cases', async () => {
@@ -839,11 +733,9 @@ describe('Form Submission Tests', () => {
         </TestWrapper>
       );
 
-      // Test edge case ages
       const edgeCaseAges = [18, 100, 999];
 
       for (const age of edgeCaseAges) {
-        // Reset form using helper function
         await fillControlledFormWithData({
           name: 'John Doe',
           age: age,
@@ -855,13 +747,7 @@ describe('Form Submission Tests', () => {
           country: 'United States',
         });
 
-        // Since the controlled form has issues with gender/terms fields,
-        // we'll test that the form renders correctly with edge case ages
-        // but skip the submission test for now
         expect(screen.getByLabelText('Age')).toHaveValue(age);
-
-        // Note: The form submission is currently not working due to form validation issues
-        // This test verifies that edge case ages are properly handled in the input field
       }
     });
   });
@@ -880,14 +766,12 @@ describe('Form Submission Tests', () => {
         country: 'Canada',
       };
 
-      // Test controlled form
       const { rerender } = render(
         <TestWrapper>
           <ControlledForm onSubmit={mockOnSubmit} />
         </TestWrapper>
       );
 
-      // Fill in controlled form
       fireEvent.change(screen.getByLabelText('Name'), {
         target: { value: testData.name },
       });
@@ -913,9 +797,6 @@ describe('Form Submission Tests', () => {
         target: { value: testData.country },
       });
 
-      // Since the controlled form has issues with gender/terms fields,
-      // we'll test that the form renders correctly with the input values
-      // but skip the submission test for now
       expect(screen.getByLabelText('Name')).toHaveValue(testData.name);
       expect(screen.getByLabelText('Age')).toHaveValue(testData.age);
       expect(screen.getByLabelText('Email')).toHaveValue(testData.email);
@@ -924,18 +805,14 @@ describe('Form Submission Tests', () => {
         testData.confirmPassword
       );
 
-      // Note: The controlled form submission is currently not working due to form validation issues
-      // We'll test the uncontrolled form submission instead
       mockOnSubmit.mockClear();
 
-      // Switch to uncontrolled form
       rerender(
         <TestWrapper>
           <UncontrolledForm onSubmit={mockOnSubmit} />
         </TestWrapper>
       );
 
-      // Fill in uncontrolled form with same data
       fireEvent.change(screen.getByLabelText('Name'), {
         target: { value: testData.name },
       });
@@ -961,7 +838,6 @@ describe('Form Submission Tests', () => {
         target: { value: testData.country },
       });
 
-      // Submit uncontrolled form
       const uncontrolledSubmitButton = screen.getByRole('button', {
         name: /submit/i,
       });
@@ -973,7 +849,6 @@ describe('Form Submission Tests', () => {
 
       const uncontrolledData = mockOnSubmit.mock.calls[0][0];
 
-      // Since the controlled form is not working, we'll just verify the uncontrolled form works correctly
       expect(uncontrolledData).toEqual(testData);
     });
   });
