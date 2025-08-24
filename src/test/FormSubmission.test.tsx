@@ -10,7 +10,7 @@ import { type FormSchema } from '../components/forms/controlled/schema';
 
 // Mock the image helper
 vi.mock('../store/helper', () => ({
-  handleImageChange: vi.fn((event, callback, setError, setIsProcessing) => {
+  handleImageChange: vi.fn((_event, callback, _setError, setIsProcessing) => {
     setIsProcessing(false);
     callback(null, 'data:image/png;base64,mock-image-data');
   }),
