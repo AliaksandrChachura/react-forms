@@ -1,8 +1,8 @@
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, useFormState } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type RHFFormProps } from './types';
 import { formSchema, type FormSchema } from './schema';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   NameField,
   AgeField,
@@ -14,33 +14,24 @@ import {
   ImageField,
   CountryField,
 } from './ControlledInputFields';
-import { useDispatch } from 'react-redux';
 import { setFormValue } from '../../../store/slices/formSlicer';
 import { type RootState } from '../../../store';
-import { useMemo } from 'react';
 
 const RHFForm = ({ onSubmit }: RHFFormProps) => {
   const filledFormValues = useSelector((state: RootState) => state.form);
   const methods = useForm<FormSchema>({
     defaultValues: filledFormValues as FormSchema,
     resolver: zodResolver(formSchema),
-    mode: 'onBlur',
+    mode: 'onChange',
     reValidateMode: 'onChange',
+    // optional: criteriaMode: 'all',
   });
   const dispatch = useDispatch();
 
-  // Check if form is valid by validating current values against schema
-  const isFormValid = useMemo(() => {
-    try {
-      const currentValues = methods.getValues();
-      formSchema.parse(currentValues);
-      return true;
-    } catch {
-      return false;
-    }
-  }, [methods]);
-
-  const isSubmitting = methods.formState.isSubmitting;
+  // This hook subscribes to form state changes without complex deps
+  const { isValid, isSubmitting, isValidating } = useFormState({
+    control: methods.control,
+  });
 
   const handleSubmit = (data: FormSchema) => {
     dispatch(setFormValue(data));
@@ -61,8 +52,8 @@ const RHFForm = ({ onSubmit }: RHFFormProps) => {
         <CountryField />
         <button
           type="submit"
-          disabled={!isFormValid || isSubmitting}
-          className={!isFormValid ? 'submit-button-error' : ''}
+          disabled={!isValid || isSubmitting || isValidating}
+          className={!isValid ? 'submit-button-error' : ''}
         >
           {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>

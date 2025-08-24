@@ -10,9 +10,7 @@ function NameField() {
   const {
     control,
     formState: { errors },
-    trigger,
   } = useFormContext<FormSchema>();
-  const [hasInteracted, setHasInteracted] = useState(false);
 
   return (
     <Controller
@@ -28,24 +26,8 @@ function NameField() {
               {...field}
               value={field.value || ''}
               placeholder="Enter your name"
-              onChange={(e) => {
-                field.onChange(e);
-                if (!hasInteracted) setHasInteracted(true);
-                if (hasInteracted) {
-                  trigger('name');
-                }
-              }}
-              onBlur={() => {
-                field.onBlur();
-                if (!hasInteracted) setHasInteracted(true);
-                if (hasInteracted) {
-                  trigger('name');
-                }
-              }}
             />
-            {hasInteracted && errors.name && (
-              <div className="error">{errors.name.message}</div>
-            )}
+            {errors.name && <div className="error">{errors.name.message}</div>}
           </div>
         );
       }}
@@ -57,9 +39,7 @@ function AgeField() {
   const {
     control,
     formState: { errors },
-    trigger,
   } = useFormContext<FormSchema>();
-  const [hasInteracted, setHasInteracted] = useState(false);
 
   return (
     <Controller
@@ -77,23 +57,10 @@ function AgeField() {
               onChange={(e) => {
                 const value = e.target.value;
                 field.onChange(value === '' ? undefined : Number(value));
-                if (!hasInteracted) setHasInteracted(true);
-                if (hasInteracted) {
-                  trigger('age');
-                }
-              }}
-              onBlur={() => {
-                field.onBlur();
-                if (!hasInteracted) setHasInteracted(true);
-                if (hasInteracted) {
-                  trigger('age');
-                }
               }}
               placeholder="Enter your age"
             />
-            {hasInteracted && errors.age && (
-              <div className="error">{errors.age.message}</div>
-            )}
+            {errors.age && <div className="error">{errors.age.message}</div>}
           </div>
         );
       }}
@@ -105,9 +72,7 @@ function EmailField() {
   const {
     control,
     formState: { errors },
-    trigger,
   } = useFormContext<FormSchema>();
-  const [hasInteracted, setHasInteracted] = useState(false);
 
   return (
     <Controller
@@ -123,22 +88,8 @@ function EmailField() {
               {...field}
               value={field.value || ''}
               placeholder="Enter your email"
-              onChange={(e) => {
-                field.onChange(e);
-                if (!hasInteracted) setHasInteracted(true);
-                if (hasInteracted) {
-                  trigger('email');
-                }
-              }}
-              onBlur={() => {
-                field.onBlur();
-                if (!hasInteracted) setHasInteracted(true);
-                if (hasInteracted) {
-                  trigger('email');
-                }
-              }}
             />
-            {hasInteracted && errors.email && (
+            {errors.email && (
               <div className="error">{errors.email.message}</div>
             )}
           </div>
@@ -152,9 +103,7 @@ function PasswordField() {
   const {
     control,
     formState: { errors },
-    trigger,
   } = useFormContext<FormSchema>();
-  const [hasInteracted, setHasInteracted] = useState(false);
 
   return (
     <Controller
@@ -170,22 +119,8 @@ function PasswordField() {
               {...field}
               value={field.value || ''}
               placeholder="Enter your password"
-              onChange={(e) => {
-                field.onChange(e);
-                if (!hasInteracted) setHasInteracted(true);
-                if (hasInteracted) {
-                  trigger('password');
-                }
-              }}
-              onBlur={() => {
-                field.onBlur();
-                if (!hasInteracted) setHasInteracted(true);
-                if (hasInteracted) {
-                  trigger('password');
-                }
-              }}
             />
-            {hasInteracted && errors.password && (
+            {errors.password && (
               <div className="error">{errors.password.message}</div>
             )}
           </div>
@@ -199,9 +134,7 @@ function ConfirmPasswordField() {
   const {
     control,
     formState: { errors },
-    trigger,
   } = useFormContext<FormSchema>();
-  const [hasInteracted, setHasInteracted] = useState(false);
 
   return (
     <Controller
@@ -217,22 +150,8 @@ function ConfirmPasswordField() {
               {...field}
               value={field.value || ''}
               placeholder="Confirm your password"
-              onChange={(e) => {
-                field.onChange(e);
-                if (!hasInteracted) setHasInteracted(true);
-                if (hasInteracted) {
-                  trigger('confirmPassword');
-                }
-              }}
-              onBlur={() => {
-                field.onBlur();
-                if (!hasInteracted) setHasInteracted(true);
-                if (hasInteracted) {
-                  trigger('confirmPassword');
-                }
-              }}
             />
-            {hasInteracted && errors.confirmPassword && (
+            {errors.confirmPassword && (
               <div className="error">{errors.confirmPassword.message}</div>
             )}
           </div>
@@ -243,8 +162,10 @@ function ConfirmPasswordField() {
 }
 
 function GenderField() {
-  const { control, trigger } = useFormContext<FormSchema>();
-  const [hasInteracted, setHasInteracted] = useState(false);
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<FormSchema>();
 
   return (
     <Controller
@@ -259,18 +180,7 @@ function GenderField() {
               {...field}
               value={field.value || ''}
               onChange={(e) => {
-                field.onChange(e);
-                if (!hasInteracted) setHasInteracted(true);
-                if (hasInteracted) {
-                  trigger('gender');
-                }
-              }}
-              onBlur={() => {
-                field.onBlur();
-                if (!hasInteracted) setHasInteracted(true);
-                if (hasInteracted) {
-                  trigger('gender');
-                }
+                field.onChange(e.target.value);
               }}
             >
               <option value="">Select gender</option>
@@ -280,6 +190,9 @@ function GenderField() {
                 Prefer not to disclose
               </option>
             </select>
+            {errors.gender && (
+              <div className="error">{errors.gender.message}</div>
+            )}
           </div>
         );
       }}
@@ -288,8 +201,10 @@ function GenderField() {
 }
 
 function TermsField() {
-  const { control, trigger } = useFormContext<FormSchema>();
-  const [hasInteracted, setHasInteracted] = useState(false);
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<FormSchema>();
 
   return (
     <Controller
@@ -305,20 +220,10 @@ function TermsField() {
             checked={!!field.value}
             onChange={(e) => {
               field.onChange(e.target.checked);
-              if (!hasInteracted) setHasInteracted(true);
-              if (hasInteracted) {
-                trigger('terms');
-              }
-            }}
-            onBlur={() => {
-              field.onBlur();
-              if (!hasInteracted) setHasInteracted(true);
-              if (hasInteracted) {
-                trigger('terms');
-              }
             }}
           />
           <label htmlFor="terms">I agree to the terms and conditions</label>
+          {errors.terms && <div className="error">{errors.terms.message}</div>}
         </div>
       )}
     />
@@ -331,11 +236,9 @@ function ImageField() {
     setValue,
     watch,
     formState: { errors },
-    trigger,
   } = useFormContext<FormSchema>();
   const [validationError, setValidationError] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
 
   const currentImageBase64 = watch('imageBase64');
 
@@ -351,22 +254,12 @@ function ImageField() {
             type="file"
             accept="image/png,image/jpeg,image/svg+xml"
             onChange={(e) => {
-              if (!hasInteracted) setHasInteracted(true);
               handleImageChange(
                 e,
                 (_, value) => setValue('imageBase64', value),
                 setValidationError,
                 setIsProcessing
               );
-              if (hasInteracted) {
-                trigger('imageBase64');
-              }
-            }}
-            onBlur={() => {
-              if (!hasInteracted) setHasInteracted(true);
-              if (hasInteracted) {
-                trigger('imageBase64');
-              }
             }}
             disabled={isProcessing}
           />
@@ -374,7 +267,7 @@ function ImageField() {
             <div className="processing">Processing image...</div>
           )}
           {validationError && <div className="error">{validationError}</div>}
-          {hasInteracted && errors.imageBase64 && (
+          {errors.imageBase64 && (
             <div className="error">{errors.imageBase64.message}</div>
           )}
           {currentImageBase64 && !validationError && (
@@ -397,14 +290,13 @@ function ImageField() {
 }
 
 function CountryField() {
-  const { control, trigger } = useFormContext<FormSchema>();
+  const { control } = useFormContext<FormSchema>();
   const { countries, isLoading } = useSelector(
     (state: RootState) => state.selectedCountries
   );
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [filteredCountries, setFilteredCountries] = useState<Country[]>([]);
-  const [hasInteracted, setHasInteracted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -436,11 +328,6 @@ function CountryField() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleCountrySelect = (country: Country) => {
-    setSearchTerm(country.name);
-    setIsOpen(false);
-  };
-
   return (
     <Controller
       control={control}
@@ -449,6 +336,13 @@ function CountryField() {
         if (field.value && field.value !== searchTerm) {
           setTimeout(() => setSearchTerm(field.value), 0);
         }
+
+        const handleCountrySelect = (country: Country) => {
+          setSearchTerm(country.name);
+          setIsOpen(false);
+          // Update the form field value when a country is selected
+          field.onChange(country.name);
+        };
 
         return (
           <div className="form-field">
@@ -461,18 +355,11 @@ function CountryField() {
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
                   setIsOpen(true);
-                  field.onChange('');
-                  if (!hasInteracted) setHasInteracted(true);
-                  if (hasInteracted) {
-                    trigger('country');
-                  }
+                  // Don't clear the field value while typing - only clear when selecting
                 }}
                 onFocus={() => setIsOpen(true)}
                 onBlur={() => {
-                  if (!hasInteracted) setHasInteracted(true);
-                  if (hasInteracted) {
-                    trigger('country');
-                  }
+                  field.onBlur();
                 }}
                 placeholder="Search for a country..."
                 disabled={isLoading}
@@ -486,11 +373,6 @@ function CountryField() {
                         className="dropdown-item"
                         onClick={() => {
                           handleCountrySelect(country);
-                          field.onChange(country.name);
-                          if (!hasInteracted) setHasInteracted(true);
-                          if (hasInteracted) {
-                            trigger('country');
-                          }
                         }}
                       >
                         <span className="country-flag">{country.flag}</span>
