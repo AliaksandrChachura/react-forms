@@ -8,15 +8,13 @@ import formReducer from '../store/slices/formSlicer';
 import selectedCountriesReducer from '../store/slices/selectedCountries';
 import { type FormSchema } from '../components/forms/controlled/schema';
 
-// Mock the image helper
 vi.mock('../store/helper', () => ({
-  handleImageChange: vi.fn((event, callback, setError, setIsProcessing) => {
+  handleImageChange: vi.fn((_event, callback, _setError, setIsProcessing) => {
     setIsProcessing(false);
     callback(null, 'data:image/png;base64,mock-image-data');
   }),
 }));
 
-// Create a mock store
 const createMockStore = (initialState = {}) => {
   return configureStore({
     reducer: {
@@ -58,7 +56,6 @@ const createMockStore = (initialState = {}) => {
   });
 };
 
-// Wrapper component for testing
 const TestWrapper = ({
   children,
   initialState = {},
@@ -88,18 +85,15 @@ describe('Field Validation Tests', () => {
       const nameInput = screen.getByLabelText('Name');
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
-      // Test empty name - submit form to see validation
       fireEvent.change(nameInput, { target: { value: '' } });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        // The form shows the first validation error, which is "Name must be at least 2 characters long"
         expect(
           screen.getByText('Name must be at least 2 characters long')
         ).toBeInTheDocument();
       });
 
-      // Test name that doesn't start with uppercase
       fireEvent.change(nameInput, { target: { value: 'john' } });
       fireEvent.click(submitButton);
 
@@ -109,7 +103,6 @@ describe('Field Validation Tests', () => {
         ).toBeInTheDocument();
       });
 
-      // Test valid name
       fireEvent.change(nameInput, { target: { value: 'John' } });
       fireEvent.click(submitButton);
 
@@ -128,7 +121,6 @@ describe('Field Validation Tests', () => {
       const ageInput = screen.getByLabelText('Age');
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
-      // Test age below minimum
       fireEvent.change(ageInput, { target: { value: '15' } });
       fireEvent.click(submitButton);
 
@@ -138,7 +130,6 @@ describe('Field Validation Tests', () => {
         ).toBeInTheDocument();
       });
 
-      // Test valid age
       fireEvent.change(ageInput, { target: { value: '25' } });
       fireEvent.click(submitButton);
 
@@ -157,7 +148,6 @@ describe('Field Validation Tests', () => {
       const emailInput = screen.getByLabelText('Email');
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
-      // Test invalid email format
       fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
       fireEvent.click(submitButton);
 
@@ -165,7 +155,6 @@ describe('Field Validation Tests', () => {
         expect(screen.getByText('Invalid email format')).toBeInTheDocument();
       });
 
-      // Test valid email
       fireEvent.change(emailInput, { target: { value: 'john@example.com' } });
       fireEvent.click(submitButton);
 
@@ -184,12 +173,10 @@ describe('Field Validation Tests', () => {
       const passwordInput = screen.getByLabelText('Password');
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
-      // Test short password
       fireEvent.change(passwordInput, { target: { value: 'short' } });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        // Uncontrolled form shows complexity error for short passwords
         expect(
           screen.getByText(
             /Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character/
@@ -197,7 +184,6 @@ describe('Field Validation Tests', () => {
         ).toBeInTheDocument();
       });
 
-      // Test valid password
       fireEvent.change(passwordInput, { target: { value: 'StrongPass123!' } });
       fireEvent.click(submitButton);
 
@@ -217,10 +203,8 @@ describe('Field Validation Tests', () => {
       const confirmPasswordInput = screen.getByLabelText('Confirm Password');
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
-      // Set a valid password first
       fireEvent.change(passwordInput, { target: { value: 'StrongPass123!' } });
 
-      // Test mismatched passwords
       fireEvent.change(confirmPasswordInput, {
         target: { value: 'DifferentPass123!' },
       });
@@ -230,7 +214,6 @@ describe('Field Validation Tests', () => {
         expect(screen.getByText('Passwords must match')).toBeInTheDocument();
       });
 
-      // Test matching passwords
       fireEvent.change(confirmPasswordInput, {
         target: { value: 'StrongPass123!' },
       });
@@ -253,7 +236,6 @@ describe('Field Validation Tests', () => {
       const genderSelect = screen.getByLabelText('Gender');
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
-      // Test no gender selected (default empty value)
       fireEvent.change(genderSelect, { target: { value: '' } });
       fireEvent.click(submitButton);
 
@@ -261,7 +243,6 @@ describe('Field Validation Tests', () => {
         expect(screen.getByText('Please select a gender')).toBeInTheDocument();
       });
 
-      // Test valid gender selection
       fireEvent.change(genderSelect, { target: { value: 'male' } });
       fireEvent.click(submitButton);
 
@@ -284,7 +265,6 @@ describe('Field Validation Tests', () => {
       );
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
-      // Test terms not agreed (default unchecked)
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -293,7 +273,6 @@ describe('Field Validation Tests', () => {
         ).toBeInTheDocument();
       });
 
-      // Test terms agreed
       fireEvent.click(termsCheckbox);
       fireEvent.click(submitButton);
 
@@ -314,7 +293,6 @@ describe('Field Validation Tests', () => {
       const countryInput = screen.getByLabelText('Country');
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
-      // Test no country selected (default empty value)
       fireEvent.change(countryInput, { target: { value: '' } });
       fireEvent.click(submitButton);
 
@@ -322,7 +300,6 @@ describe('Field Validation Tests', () => {
         expect(screen.getByText('Please select a country')).toBeInTheDocument();
       });
 
-      // Test valid country selection
       fireEvent.change(countryInput, { target: { value: 'United States' } });
       fireEvent.click(submitButton);
 
@@ -344,7 +321,6 @@ describe('Field Validation Tests', () => {
 
       let nameInput = screen.getByLabelText('Name');
 
-      // Test controlled form
       fireEvent.change(nameInput, { target: { value: 'john' } });
       fireEvent.click(screen.getByRole('button', { name: /submit/i }));
 
@@ -354,7 +330,6 @@ describe('Field Validation Tests', () => {
         ).toBeInTheDocument();
       });
 
-      // Switch to uncontrolled form
       rerender(
         <TestWrapper>
           <UncontrolledForm onSubmit={mockOnSubmit} />
@@ -363,7 +338,6 @@ describe('Field Validation Tests', () => {
 
       nameInput = screen.getByLabelText('Name');
 
-      // Test uncontrolled form with same input
       fireEvent.change(nameInput, { target: { value: 'john' } });
 
       await waitFor(() => {
@@ -382,7 +356,6 @@ describe('Field Validation Tests', () => {
 
       let passwordInput = screen.getByLabelText('Password');
 
-      // Test controlled form
       fireEvent.change(passwordInput, { target: { value: 'short' } });
       fireEvent.click(screen.getByRole('button', { name: /submit/i }));
 
@@ -392,7 +365,6 @@ describe('Field Validation Tests', () => {
         ).toBeInTheDocument();
       });
 
-      // Switch to uncontrolled form
       rerender(
         <TestWrapper>
           <UncontrolledForm onSubmit={mockOnSubmit} />
@@ -400,8 +372,6 @@ describe('Field Validation Tests', () => {
       );
 
       passwordInput = screen.getByLabelText('Password');
-
-      // Test uncontrolled form with same input
       fireEvent.change(passwordInput, { target: { value: 'short' } });
 
       await waitFor(() => {

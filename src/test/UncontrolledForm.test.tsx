@@ -7,15 +7,13 @@ import formReducer from '../store/slices/formSlicer';
 import selectedCountriesReducer from '../store/slices/selectedCountries';
 import { type FormSchema } from '../components/forms/controlled/schema';
 
-// Mock the image helper
 vi.mock('../store/helper', () => ({
-  handleImageChange: vi.fn((event, callback, setError, setIsProcessing) => {
+  handleImageChange: vi.fn((_event, callback, _setError, setIsProcessing) => {
     setIsProcessing(false);
     callback(null, 'data:image/png;base64,mock-image-data');
   }),
 }));
 
-// Create a mock store
 const createMockStore = (initialState = {}) => {
   return configureStore({
     reducer: {
@@ -57,7 +55,6 @@ const createMockStore = (initialState = {}) => {
   });
 };
 
-// Wrapper component for testing
 const TestWrapper = ({
   children,
   initialState = {},
@@ -83,7 +80,6 @@ describe('Uncontrolled Form Rendering', () => {
       </TestWrapper>
     );
 
-    // Check for all required form fields
     expect(screen.getByLabelText('Name')).toBeInTheDocument();
     expect(screen.getByLabelText('Age')).toBeInTheDocument();
     expect(screen.getByLabelText('Email')).toBeInTheDocument();
@@ -96,7 +92,6 @@ describe('Uncontrolled Form Rendering', () => {
     expect(screen.getByLabelText('Profile Image')).toBeInTheDocument();
     expect(screen.getByLabelText('Country')).toBeInTheDocument();
 
-    // Check for submit button
     expect(screen.getByRole('button', { name: /submit/i })).toBeInTheDocument();
   });
 
@@ -107,7 +102,6 @@ describe('Uncontrolled Form Rendering', () => {
       </TestWrapper>
     );
 
-    // Check input types
     expect(screen.getByLabelText('Name')).toHaveAttribute('type', 'text');
     expect(screen.getByLabelText('Age')).toHaveAttribute('type', 'number');
     expect(screen.getByLabelText('Email')).toHaveAttribute('type', 'email');
@@ -124,10 +118,8 @@ describe('Uncontrolled Form Rendering', () => {
       'file'
     );
 
-    // Check select element
     expect(screen.getByLabelText('Gender')).toBeInstanceOf(HTMLSelectElement);
 
-    // Check checkbox
     expect(
       screen.getByLabelText('I agree to the terms and conditions')
     ).toHaveAttribute('type', 'checkbox');
@@ -140,7 +132,6 @@ describe('Uncontrolled Form Rendering', () => {
       </TestWrapper>
     );
 
-    // Check placeholders
     expect(screen.getByLabelText('Name')).toHaveAttribute(
       'placeholder',
       'Enter your name'
@@ -177,7 +168,6 @@ describe('Uncontrolled Form Rendering', () => {
     const genderSelect = screen.getByLabelText('Gender');
     expect(genderSelect).toBeInTheDocument();
 
-    // Check for gender options
     expect(
       screen.getByRole('option', { name: 'Select gender' })
     ).toBeInTheDocument();
@@ -195,7 +185,6 @@ describe('Uncontrolled Form Rendering', () => {
       </TestWrapper>
     );
 
-    // Check all labels are present
     expect(screen.getByText('Name')).toBeInTheDocument();
     expect(screen.getByText('Age')).toBeInTheDocument();
     expect(screen.getByText('Email')).toBeInTheDocument();
@@ -213,7 +202,6 @@ describe('Uncontrolled Form Rendering', () => {
       </TestWrapper>
     );
 
-    // Check for proper label-input associations
     const nameInput = screen.getByLabelText('Name');
     const ageInput = screen.getByLabelText('Age');
     const emailInput = screen.getByLabelText('Email');
@@ -262,7 +250,6 @@ describe('Uncontrolled Form Rendering', () => {
 
     const submitButton = screen.getByRole('button', { name: /submit/i });
 
-    // Button should be enabled initially in uncontrolled form
     expect(submitButton).toBeEnabled();
     expect(submitButton).toHaveTextContent('Submit');
   });

@@ -6,7 +6,6 @@ import App from '../App';
 import formReducer from '../store/slices/formSlicer';
 import selectedCountriesReducer from '../store/slices/selectedCountries';
 
-// Create a mock store
 const createMockStore = () => {
   return configureStore({
     reducer: {
@@ -43,7 +42,6 @@ describe('App', () => {
       </Provider>
     );
 
-    // Check that the header is rendered with the expected buttons
     expect(screen.getByText('Controlled')).toBeInTheDocument();
     expect(screen.getByText('Uncontrolled')).toBeInTheDocument();
   });
@@ -55,8 +53,6 @@ describe('App', () => {
         <App />
       </Provider>
     );
-
-    // Check that the header is rendered with the expected buttons
     expect(screen.getByText('Controlled')).toBeInTheDocument();
     expect(screen.getByText('Uncontrolled')).toBeInTheDocument();
   });

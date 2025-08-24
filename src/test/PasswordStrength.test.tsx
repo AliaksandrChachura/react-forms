@@ -8,15 +8,13 @@ import formReducer from '../store/slices/formSlicer';
 import selectedCountriesReducer from '../store/slices/selectedCountries';
 import { type FormSchema } from '../components/forms/controlled/schema';
 
-// Mock the image helper
 vi.mock('../store/helper', () => ({
-  handleImageChange: vi.fn((event, callback, setError, setIsProcessing) => {
+  handleImageChange: vi.fn((_event, callback, _setError, setIsProcessing) => {
     setIsProcessing(false);
     callback(null, 'data:image/png;base64,mock-image-data');
   }),
 }));
 
-// Create a mock store
 const createMockStore = (initialState = {}) => {
   return configureStore({
     reducer: {
@@ -58,7 +56,6 @@ const createMockStore = (initialState = {}) => {
   });
 };
 
-// Wrapper component for testing
 const TestWrapper = ({
   children,
   initialState = {},
@@ -88,7 +85,6 @@ describe('Password Strength Calculation Tests', () => {
       const passwordInput = screen.getByLabelText('Password');
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
-      // Test passwords below minimum length
       const shortPasswords = [
         '',
         'a',
@@ -105,7 +101,6 @@ describe('Password Strength Calculation Tests', () => {
         fireEvent.click(submitButton);
 
         await waitFor(() => {
-          // Uncontrolled form shows complexity error first for short passwords
           expect(
             screen.getByText(
               /Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character/
@@ -125,14 +120,13 @@ describe('Password Strength Calculation Tests', () => {
       const passwordInput = screen.getByLabelText('Password');
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
-      // Test password missing complexity requirements
       const weakPasswords = [
-        'password123', // No uppercase, special char
-        'PASSWORD123', // No lowercase, special char
-        'Password123', // No special char
-        'Password!', // No number
-        'password!', // No uppercase, number
-        'PASSWORD!', // No lowercase, number
+        'password123',
+        'PASSWORD123',
+        'Password123',
+        'Password!',
+        'password!',
+        'PASSWORD!',
       ];
 
       for (const password of weakPasswords) {
@@ -159,7 +153,6 @@ describe('Password Strength Calculation Tests', () => {
       const passwordInput = screen.getByLabelText('Password');
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
-      // Test various strong passwords
       const strongPasswords = [
         'StrongPass123!',
         'MyP@ssw0rd2024',
@@ -193,7 +186,6 @@ describe('Password Strength Calculation Tests', () => {
 
       let passwordInput = screen.getByLabelText('Password');
 
-      // Test controlled form with weak password
       fireEvent.change(passwordInput, { target: { value: 'weak' } });
 
       await waitFor(() => {
@@ -202,7 +194,6 @@ describe('Password Strength Calculation Tests', () => {
         ).toBeInTheDocument();
       });
 
-      // Switch to uncontrolled form
       rerender(
         <TestWrapper>
           <UncontrolledForm onSubmit={mockOnSubmit} />
@@ -212,12 +203,10 @@ describe('Password Strength Calculation Tests', () => {
       passwordInput = screen.getByLabelText('Password');
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
-      // Test uncontrolled form with same weak password
       fireEvent.change(passwordInput, { target: { value: 'weak' } });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        // Uncontrolled form shows complexity error for short passwords
         expect(
           screen.getByText(
             /Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character/
@@ -229,7 +218,6 @@ describe('Password Strength Calculation Tests', () => {
     it('both forms accept identical strong passwords', async () => {
       const strongPassword = 'StrongPass123!';
 
-      // Test controlled form
       const { rerender } = render(
         <TestWrapper>
           <ControlledForm onSubmit={mockOnSubmit} />
@@ -251,7 +239,6 @@ describe('Password Strength Calculation Tests', () => {
         ).not.toBeInTheDocument();
       });
 
-      // Switch to uncontrolled form
       rerender(
         <TestWrapper>
           <UncontrolledForm onSubmit={mockOnSubmit} />
@@ -276,7 +263,6 @@ describe('Password Strength Calculation Tests', () => {
     it('both forms reject identical weak passwords', async () => {
       const weakPassword = 'password123';
 
-      // Test controlled form
       const { rerender } = render(
         <TestWrapper>
           <ControlledForm onSubmit={mockOnSubmit} />
@@ -295,7 +281,6 @@ describe('Password Strength Calculation Tests', () => {
         ).toBeInTheDocument();
       });
 
-      // Switch to uncontrolled form
       rerender(
         <TestWrapper>
           <UncontrolledForm onSubmit={mockOnSubmit} />

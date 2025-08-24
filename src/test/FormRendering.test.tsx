@@ -8,15 +8,13 @@ import formReducer from '../store/slices/formSlicer';
 import selectedCountriesReducer from '../store/slices/selectedCountries';
 import { type FormSchema } from '../components/forms/controlled/schema';
 
-// Mock the image helper
 vi.mock('../store/helper', () => ({
-  handleImageChange: vi.fn((event, callback, setError, setIsProcessing) => {
+  handleImageChange: vi.fn((_event, callback, _setError, setIsProcessing) => {
     setIsProcessing(false);
     callback(null, 'data:image/png;base64,mock-image-data');
   }),
 }));
 
-// Create a mock store
 const createMockStore = (initialState = {}) => {
   return configureStore({
     reducer: {
@@ -58,7 +56,6 @@ const createMockStore = (initialState = {}) => {
   });
 };
 
-// Wrapper component for testing
 const TestWrapper = ({
   children,
   initialState = {},
@@ -85,7 +82,6 @@ describe('Form Rendering - Both Implementations', () => {
         </TestWrapper>
       );
 
-      // Check for all required form fields
       expect(screen.getByLabelText('Name')).toBeInTheDocument();
       expect(screen.getByLabelText('Age')).toBeInTheDocument();
       expect(screen.getByLabelText('Email')).toBeInTheDocument();
@@ -98,7 +94,6 @@ describe('Form Rendering - Both Implementations', () => {
       expect(screen.getByLabelText('Profile Image')).toBeInTheDocument();
       expect(screen.getByLabelText('Country')).toBeInTheDocument();
 
-      // Check for submit button
       expect(
         screen.getByRole('button', { name: /submit/i })
       ).toBeInTheDocument();
@@ -111,7 +106,6 @@ describe('Form Rendering - Both Implementations', () => {
         </TestWrapper>
       );
 
-      // Check input types
       expect(screen.getByLabelText('Name')).toHaveAttribute('type', 'text');
       expect(screen.getByLabelText('Age')).toHaveAttribute('type', 'number');
       expect(screen.getByLabelText('Email')).toHaveAttribute('type', 'email');
@@ -128,10 +122,8 @@ describe('Form Rendering - Both Implementations', () => {
         'file'
       );
 
-      // Check select element
       expect(screen.getByLabelText('Gender')).toBeInstanceOf(HTMLSelectElement);
 
-      // Check checkbox
       expect(
         screen.getByLabelText('I agree to the terms and conditions')
       ).toHaveAttribute('type', 'checkbox');
@@ -146,7 +138,6 @@ describe('Form Rendering - Both Implementations', () => {
 
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
-      // Button should be disabled initially since form is empty
       expect(submitButton).toBeDisabled();
       expect(submitButton).toHaveTextContent('Submit');
     });
@@ -160,7 +151,6 @@ describe('Form Rendering - Both Implementations', () => {
         </TestWrapper>
       );
 
-      // Check for all required form fields
       expect(screen.getByLabelText('Name')).toBeInTheDocument();
       expect(screen.getByLabelText('Age')).toBeInTheDocument();
       expect(screen.getByLabelText('Email')).toBeInTheDocument();
@@ -173,7 +163,6 @@ describe('Form Rendering - Both Implementations', () => {
       expect(screen.getByLabelText('Profile Image')).toBeInTheDocument();
       expect(screen.getByLabelText('Country')).toBeInTheDocument();
 
-      // Check for submit button
       expect(
         screen.getByRole('button', { name: /submit/i })
       ).toBeInTheDocument();
@@ -186,7 +175,6 @@ describe('Form Rendering - Both Implementations', () => {
         </TestWrapper>
       );
 
-      // Check input types
       expect(screen.getByLabelText('Name')).toHaveAttribute('type', 'text');
       expect(screen.getByLabelText('Age')).toHaveAttribute('type', 'number');
       expect(screen.getByLabelText('Email')).toHaveAttribute('type', 'email');
@@ -203,10 +191,8 @@ describe('Form Rendering - Both Implementations', () => {
         'file'
       );
 
-      // Check select element
       expect(screen.getByLabelText('Gender')).toBeInstanceOf(HTMLSelectElement);
 
-      // Check checkbox
       expect(
         screen.getByLabelText('I agree to the terms and conditions')
       ).toHaveAttribute('type', 'checkbox');
@@ -221,7 +207,6 @@ describe('Form Rendering - Both Implementations', () => {
 
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
-      // Button should be enabled initially in uncontrolled form
       expect(submitButton).toBeEnabled();
       expect(submitButton).toHaveTextContent('Submit');
     });
@@ -235,7 +220,6 @@ describe('Form Rendering - Both Implementations', () => {
         </TestWrapper>
       );
 
-      // Check controlled form fields
       expect(screen.getByLabelText('Name')).toBeInTheDocument();
       expect(screen.getByLabelText('Age')).toBeInTheDocument();
       expect(screen.getByLabelText('Email')).toBeInTheDocument();
@@ -248,14 +232,12 @@ describe('Form Rendering - Both Implementations', () => {
       expect(screen.getByLabelText('Profile Image')).toBeInTheDocument();
       expect(screen.getByLabelText('Country')).toBeInTheDocument();
 
-      // Switch to uncontrolled form
       rerender(
         <TestWrapper>
           <UncontrolledForm onSubmit={mockOnSubmit} />
         </TestWrapper>
       );
 
-      // Check uncontrolled form has same fields
       expect(screen.getByLabelText('Name')).toBeInTheDocument();
       expect(screen.getByLabelText('Age')).toBeInTheDocument();
       expect(screen.getByLabelText('Email')).toBeInTheDocument();
@@ -276,7 +258,6 @@ describe('Form Rendering - Both Implementations', () => {
         </TestWrapper>
       );
 
-      // Check controlled form placeholders
       expect(screen.getByLabelText('Name')).toHaveAttribute(
         'placeholder',
         'Enter your name'
@@ -302,14 +283,12 @@ describe('Form Rendering - Both Implementations', () => {
         'Search for a country...'
       );
 
-      // Switch to uncontrolled form
       rerender(
         <TestWrapper>
           <UncontrolledForm onSubmit={mockOnSubmit} />
         </TestWrapper>
       );
 
-      // Check uncontrolled form has same placeholders
       expect(screen.getByLabelText('Name')).toHaveAttribute(
         'placeholder',
         'Enter your name'
@@ -343,7 +322,6 @@ describe('Form Rendering - Both Implementations', () => {
         </TestWrapper>
       );
 
-      // Check controlled form gender options
       expect(
         screen.getByRole('option', { name: 'Select gender' })
       ).toBeInTheDocument();
@@ -355,14 +333,12 @@ describe('Form Rendering - Both Implementations', () => {
         screen.getByRole('option', { name: 'Prefer not to disclose' })
       ).toBeInTheDocument();
 
-      // Switch to uncontrolled form
       rerender(
         <TestWrapper>
           <UncontrolledForm onSubmit={mockOnSubmit} />
         </TestWrapper>
       );
 
-      // Check uncontrolled form has same gender options
       expect(
         screen.getByRole('option', { name: 'Select gender' })
       ).toBeInTheDocument();
@@ -382,7 +358,6 @@ describe('Form Rendering - Both Implementations', () => {
         </TestWrapper>
       );
 
-      // Check controlled form accessibility
       expect(screen.getByLabelText('Name')).toHaveAttribute('id', 'name');
       expect(screen.getByLabelText('Age')).toHaveAttribute('id', 'age');
       expect(screen.getByLabelText('Email')).toHaveAttribute('id', 'email');
@@ -404,14 +379,12 @@ describe('Form Rendering - Both Implementations', () => {
       );
       expect(screen.getByLabelText('Country')).toHaveAttribute('id', 'country');
 
-      // Switch to uncontrolled form
       rerender(
         <TestWrapper>
           <UncontrolledForm onSubmit={mockOnSubmit} />
         </TestWrapper>
       );
 
-      // Check uncontrolled form has same accessibility
       expect(screen.getByLabelText('Name')).toHaveAttribute('id', 'name');
       expect(screen.getByLabelText('Age')).toHaveAttribute('id', 'age');
       expect(screen.getByLabelText('Email')).toHaveAttribute('id', 'email');
