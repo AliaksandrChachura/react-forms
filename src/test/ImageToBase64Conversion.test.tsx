@@ -109,7 +109,7 @@ describe('Image to Base64 Conversion Tests', () => {
         'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=';
 
       mockHandleImageChange.mockImplementation(
-        async (event, setValue, setValidationError, setIsProcessing) => {
+        async (_event, setValue, _setValidationError, setIsProcessing) => {
           setIsProcessing(false);
           setValue('imageBase64', mockBase64Data);
         }
@@ -148,7 +148,7 @@ describe('Image to Base64 Conversion Tests', () => {
       });
 
       mockHandleImageChange.mockImplementation(
-        async (event, setValue, setValidationError, setIsProcessing) => {
+        async (_event, setValue, setValidationError, setIsProcessing) => {
           setIsProcessing(false);
           setValidationError('Failed to convert image');
           setValue('imageBase64', '');
@@ -285,10 +285,9 @@ describe('Image to Base64 Conversion Tests', () => {
       const mockSetIsProcessing = vi.fn();
 
       mockHandleImageChange.mockImplementation(
-        async (event, setValue, setValidationError, setIsProcessing) => {
+        async (_event, setValue, _setValidationError, setIsProcessing) => {
           setIsProcessing(true);
 
-          // Simulate async processing
           await Promise.resolve();
           setIsProcessing(false);
           setValue('imageBase64', 'data:image/jpeg;base64,converted-data');
@@ -337,7 +336,7 @@ describe('Image to Base64 Conversion Tests', () => {
 
       let callIndex = 0;
       mockHandleImageChange.mockImplementation(
-        async (event, setValue, setValidationError, setIsProcessing) => {
+        async (_event, setValue, _setValidationError, setIsProcessing) => {
           const result = mockBase64Results[callIndex];
           callIndex++;
           setIsProcessing(false);
